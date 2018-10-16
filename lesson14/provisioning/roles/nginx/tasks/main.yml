@@ -1,0 +1,68 @@
+---
+- name: Create Nginx sites-available
+  file:
+    path: /etc/nginx/sites-available
+    state: directory
+    mode: 0775
+
+- name: Create Nginx sites-enabled
+  file:
+    path: /etc/nginx/sites-enabled
+    state: directory
+    mode: 0775
+
+- name: Enable nginx repo
+  template:
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Ensure nginx is installed.
+  yum:
+    name: "{{ nginx_package_name }}"
+    state: present
+
+- name: Copy Nginx configuration in place.
+  template:
+    src: "{{ nginx_conf_template }}"
+    dest: "{{ nginx_conf_file_path }}"
+    owner: root
+    group: "{{ root_group }}"
+    mode: 0644
+  notify:
+    - reload nginx
+
+- name: Copy Site configuration in place.
+  template:
+    src: "{{ nginx_site_template }}"
+    dest: /etc/nginx/sites-available/{{ site_server_name }}
+    owner: root
+    group: "{{ root_group }}"
+    mode: 0644
+  notify:
+    - reload nginx
+
+- name: Create symlink from available to enabled
+  file:
+    src: "/etc/nginx/sites-available/{{ site_server_name }}"
+    dest: "/etc/nginx/sites-enabled/{{ site_server_name }}"
+    state: link
+  notify:
+    - reload nginx
+
+- name: Create Nginx client_body_temp
+  file:
+    path: /var/lib/nginx/
+    state: directory
+    mode: 0775
+
+- name: Create Nginx client_body_temp
+  file:
+    path: /var/lib/nginx/client_body_temp
+    state: touch
+    mode: 0775
+
+- name: Ensure Nginx started and enabled.
+  service: name=nginx state=started enabled=yes

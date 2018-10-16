@@ -1,0 +1,115 @@
+user  {{ nginx_user }};
+worker_processes  {{ nginx_worker_processes }};
+
+error_log  {{ nginx_path_to_error_log }} notice;
+pid {{ nginx_path_to_pid }};
+
+worker_rlimit_nofile {{ nginx_worker_rlimit_nofile }};
+
+events {
+    worker_connections  {{ nginx_worker_connections }};
+    use epoll;
+    multi_accept {{ nginx_multi_accept }};
+}
+
+http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+                log_format  main  '$remote_addr - $remote_user [$time_local] $request_time $upstream_response_time $request '
+                      '"$status" $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+                log_format  timed_maas   '$remote_addr - $remote_user [$time_local] '
+                        '"$request" $status $bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$uid_got" "$uid_set" $msec '
+                        # extended #
+                        'adfr="$cookie_adfr" '
+                        'rt=$request_time ut="$upstream_response_time" '
+                        'cs=$upstream_cache_status ua="$upstream_addr" us="$upstream_status"'
+                        ' xh="$host"'
+                        ;
+
+        access_log  off;
+        tcp_nopush     on;
+        tcp_nodelay      on;
+        keepalive_timeout 40;
+        keepalive_requests 1000;
+        lingering_time     120s;
+        lingering_timeout  5;
+        reset_timedout_connection on;
+
+        aio on;
+        directio 5m;
+        directio_alignment 4k;
+        output_buffers 2 64k;
+
+        log_not_found off;
+        open_file_cache max=6000 inactive=10m;
+        open_file_cache_errors   on;
+        open_file_cache_valid 15s;
+
+        server_tokens off;
+
+        client_max_body_size       512m;
+        client_body_buffer_size    256k;
+        client_body_temp_path      /var/lib/nginx/client_body_temp;
+        client_header_buffer_size    2k;
+        large_client_header_buffers  32 16k;
+        server_names_hash_max_size      512;
+
+        gzip  on;
+        gzip_min_length 600;
+        gzip_buffers 64 8k;
+        gzip_comp_level 4;
+        gzip_http_version 1.1;
+        gzip_proxied any;
+        gzip_types text/plain application/xml application/x-javascript text/javascript text/css text/json, application/json application/javascript;
+        gzip_disable     "msie6";
+
+        ssl_session_cache shared:SSL:20m;
+        ssl_session_timeout 6h;
+        ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:!ECDHE-RSA-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:!DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4:!LOW:!SEED:!CAMELLIA:!IDEA:!SRP:!SSLv2:!RSA";
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+    ############ fastcgi #########
+        fastcgi_buffer_size 32k;
+        fastcgi_buffers 512 16k;
+        fastcgi_busy_buffers_size 512k;
+        fastcgi_max_temp_file_size 2048m;
+        fastcgi_temp_file_write_size 64k;
+        fastcgi_temp_path /var/lib/nginx/fastcgi_temp 1 2;
+        fastcgi_read_timeout 600s;
+        fastcgi_send_timeout 400s;
+        fastcgi_connect_timeout 180s;
+        fastcgi_intercept_errors on;
+
+
+    ############ fastcgi #########
+    ############ proxy ###########
+        proxy_http_version 1.1;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header   X-Forwarded-For  $remote_addr;
+        proxy_connect_timeout      190;
+        proxy_send_timeout         190;
+        proxy_read_timeout         72000;
+        proxy_buffer_size          32k;
+        proxy_buffers              32 256k;
+        proxy_busy_buffers_size    512k;
+        proxy_temp_file_write_size 256k;
+        proxy_max_temp_file_size  0;
+        proxy_temp_path            /var/lib/nginx/proxy_temp;
+    ############ proxy ###########
+
+        upstream {{ nginx_upstream_name }} {
+             server {{ nginx_upstream_server1 }};
+             server {{ nginx_upstream_server2 }};
+        }
+
+        include /etc/nginx/sites-enabled/*;
+
+}
+

@@ -1,0 +1,21 @@
+---
+root_group: root
+
+nginx_user: "root"
+nginx_worker_processes: "auto"
+nginx_path_to_error_log: /var/log/nginx/error.log
+nginx_path_to_pid: /var/run/nginx.pid
+nginx_worker_rlimit_nofile: 262144
+nginx_worker_connections: 60048
+nginx_multi_accept: "on"
+nginx_upstream_name: "nginx_upstream"
+nginx_upstream_server1: "localhost"
+nginx_upstream_server2: "localhost"
+nginx_conf_file_path: /etc/nginx/nginx.conf
+
+site_server_name: "otus.learning.local"
+site_path_to_key: /etc/nginx/ssl/otus.learning.local.key
+site_path_to_crt: /etc/nginx/ssl/otus.learning.local.crt
+site_charset: "utf-8"
+site_basic_auth: "on"
+site_basic_user_file: /etc/nginx/htpasswd

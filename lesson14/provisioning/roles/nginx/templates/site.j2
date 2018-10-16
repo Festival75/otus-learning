@@ -1,0 +1,28 @@
+server {
+        listen       80;
+        listen       443 ssl;
+        server_name  {{ site_server_name }};
+        access_log /var/log/nginx/{{ site_server_name }}-access.log main;
+        error_log /var/log/nginx/{{ site_server_name }}-error.log notice;
+
+        #ssl_certificate_key  {{ site_path_to_key }};
+        #ssl_certificate      {{ site_path_to_crt }};
+
+        add_header Strict-Transport-Security max-age=63072000;
+        add_header X-Content-Type-Options nosniff;
+        charset    {{ site_charset }};
+
+        root /var/www/{{ site_server_name }};
+
+        location / {
+                #auth_basic {{ site_basic_auth }};
+                #auth_basic_user_file {{ site_basic_user_file }};
+                proxy_pass http://{{ nginx_upstream_name }};
+        }
+
+
+        location ~ /\. {
+                deny  all;
+        }
+
+}
