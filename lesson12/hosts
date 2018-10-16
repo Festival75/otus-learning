@@ -1,2 +1,0 @@
-[all]
-reference ansible_host=192.168.11.101 ansible_port=2222 ansible_user=vagrant ansible_private_key_file=.vagrant/machines/host1/virtualbox/private_key

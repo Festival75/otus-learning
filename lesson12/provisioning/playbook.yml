@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: reference
   become: true
-  tasks:
+  roles:
     - soft-install

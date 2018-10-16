@@ -11,12 +11,9 @@
 - name: Install soft
   yum:
     name:
-      - epel-release
-      - iostat
       - vmstat
       - iotop
       - atop
-      - sar
       - telnet
       - vim
     state: latest
