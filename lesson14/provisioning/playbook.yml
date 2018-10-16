@@ -4,3 +4,9 @@
   become: true
   roles:
     - nginx
+
+# Install ELK
+- hosts: log
+  become: true
+  roles:
+    - elk
