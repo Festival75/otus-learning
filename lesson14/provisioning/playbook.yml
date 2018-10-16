@@ -1,12 +1,6 @@
 ---
-# Runs only on host1
+# Install nginx
 - hosts: web
   become: true
-  tasks:
-
-  - name: Install packages only on host1
-    yum:
-      name:
-        - telnet
-        - vim
-      state: latest
+  roles:
+    - nginx
