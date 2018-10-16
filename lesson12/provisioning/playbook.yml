@@ -1,12 +1,5 @@
 ---
-# Runs only on host1
-- hosts: web
+- hosts: all
   become: true
   tasks:
-
-  - name: Install packages only on host1
-    yum:
-      name:
-        - telnet
-        - vim
-      state: latest
+    - soft-install

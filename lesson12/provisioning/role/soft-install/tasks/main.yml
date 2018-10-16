@@ -1,0 +1,22 @@
+---
+- name: Install epel
+  yum:
+    name:
+      - epel-release
+    state: latest
+
+- name: Update system
+  yum: name=* state=latest
+
+- name: Install soft
+  yum:
+    name:
+      - epel-release
+      - iostat
+      - vmstat
+      - iotop
+      - atop
+      - sar
+      - telnet
+      - vim
+    state: latest

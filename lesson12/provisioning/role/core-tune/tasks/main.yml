@@ -1,0 +1,2 @@
+- name: Make system more server-like
+  command: sysctl -w net.ipv4.ip_forward=1
