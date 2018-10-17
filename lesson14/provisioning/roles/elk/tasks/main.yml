@@ -27,4 +27,4 @@
   copy: src=docker-elk-master dest=/etc/docker-manifests/elk recursive=yes
 
 - name: UP Docker-Compose
-  command: docker-compose -f /etc/docker-manifests/elk/docker-elk-master/docer-compose.yml up -d
+  command: docker-compose -f /etc/docker-manifests/elk/docker-elk-master/docker-compose.yml up -d
