@@ -1,6 +1,6 @@
 ---
 # Install Zabbix
-- hosts: web
+- hosts: zabbix
   become: true
   roles:
     - zabbix

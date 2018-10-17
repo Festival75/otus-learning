@@ -8,23 +8,16 @@
 - name: Update system
   yum: name=* state=latest
 
-- name: Install Docker
-  yum: name=docker-ce state=latest
+#- name: Adding Zabbix repository
+#  command: rpm -ivh https://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-release-3.4-2.el7.noarch.rpm
 
-- name: Install Docker-Compose
-  copy:
-    src: docker-compose
-    dest: usr/local/bin/
-    mode: 0755
+- name: Frontend installation prerequisites
+  command: yum-config-manager --enable rhel-7-server-optional-rpms
 
-- name: Create Docker dirs
-  file:
-    path: /etc/docker-manifests/zabbix
-    state: directory
-    mode: 0775
-
-- name: Copy Compose File to VM
-  copy: src=dockercompose.yml dest=/etc/docker-manifests/zabbix
-
-- name: UP Docker-Compose
-  command: docker-compose -f /etc/docker-manifests/zabbix/docker-compose.yml up -d
+- name: Install Zabbix
+  yum:
+    name:
+      - zabbix-server-mysql
+      - zabbix-proxy-mysql
+      - zabbix-web-mysql
+    state: latest
