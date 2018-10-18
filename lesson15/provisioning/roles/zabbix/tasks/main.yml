@@ -17,7 +17,7 @@
 - name: Install Zabbix
   yum:
     name:
-      - zabbix-server-mysql
-      - zabbix-proxy-mysql
-      - zabbix-web-mysql
+      - prepare-server-mysql
+      - prepare-proxy-mysql
+      - prepare-web-mysql
     state: latest

@@ -1,6 +1,6 @@
 ---
-# Install Zabbix
-- hosts: prepare
+# Prepare servers
+- hosts: all
   become: true
   roles:
     - prepare
